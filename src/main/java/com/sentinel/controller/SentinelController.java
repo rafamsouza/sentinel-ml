@@ -21,19 +21,25 @@ public class SentinelController {
 	
 	@RequestMapping(path="/mutant", method=RequestMethod.POST)
 	public ResponseEntity<Boolean> isMutant(@RequestBody DNA dna) {
-		char[][] dnaMatrix = service.createCompareMatrix(dna.getDna());
-		Integer h = service.compareHorizontalDNA(dnaMatrix);
-		Integer v = service.compareVerticalDNA(dnaMatrix);
-		Integer d = service.compareDiagonalDNA(dnaMatrix);
-		
-		if(h + v + d >= 2) {
-			dna.setType(1);
+		char[][] dnaMatrix;
+		try {
+			dnaMatrix = service.createCompareMatrix(dna.getDna());
+			Integer h = service.compareHorizontalDNA(dnaMatrix);
+			Integer v = service.compareVerticalDNA(dnaMatrix);
+			Integer d = service.compareDiagonalDNA(dnaMatrix);
+			
+			if(h + v + d >= 2) {
+				dna.setType(1);
+				service.storeDNASequence(dna);
+				return new ResponseEntity<>(HttpStatus.OK);
+			}
+			dna.setType(0);
 			service.storeDNASequence(dna);
-			return new ResponseEntity<>(HttpStatus.OK);
+			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
-		dna.setType(0);
-		service.storeDNASequence(dna);
-		return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 	}
 	
 	@RequestMapping(path="/stats", method=RequestMethod.GET)

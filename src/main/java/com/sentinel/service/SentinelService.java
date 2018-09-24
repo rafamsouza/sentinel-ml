@@ -2,6 +2,7 @@ package com.sentinel.service;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,10 +83,13 @@ public class SentinelService {
 		return 0;
 	}
 	
-	public char[][] createCompareMatrix(String[] dna) {
+	public char[][] createCompareMatrix(String[] dna) throws Exception {
 		char[][] dnaMatrix = new char[6][6];
 		
 		for(int i=0; i < dna.length; i++) {
+			if(!dna[i].matches("([ATCG]))")) {
+				throw new Exception("Not a DNA valid sequence");
+			}
 			char[] ca = dna[i].toCharArray();
 			for(int j=0; j < ca.length; j++) {
 				dnaMatrix[i][j] = ca[i];
@@ -103,6 +107,10 @@ public class SentinelService {
 		List<DNA> resultList = repository.findAll();
 		int mutant = 0;
 		int human = 0;
+		
+		if(resultList == null) {
+			return new HashMap<>();
+		}
 		
 		for(DNA dna : resultList) {
 			if(dna.getType() == 1) {
