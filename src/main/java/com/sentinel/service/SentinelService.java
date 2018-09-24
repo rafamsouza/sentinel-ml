@@ -87,8 +87,8 @@ public class SentinelService {
 		char[][] dnaMatrix = new char[6][6];
 		
 		for(int i=0; i < dna.length; i++) {
-			if(!dna[i].matches("([ATCG]))")) {
-				throw new Exception("Not a DNA valid sequence");
+			if(!dna[i].matches("[ATCG]*")) {
+				throw new Exception("Not a valid DNA sequence");
 			}
 			char[] ca = dna[i].toCharArray();
 			for(int j=0; j < ca.length; j++) {
